@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     vc::Vc_Server server(ip, port);
     server.CreateSocket();
     server.bind();
+//    server.CreateEpoll();
 
     return 0;
 }
