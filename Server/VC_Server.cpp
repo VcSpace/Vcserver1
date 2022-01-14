@@ -15,10 +15,11 @@ namespace vc
         int Domain = AF_INET;
         int type = SOCK_STREAM;
 
-        if(_Sock.create_socket(Domain, type))
+        if(_Sock.Create_socket(Domain, type))
         {
             std::cout << "CreateSocket" << std::endl;
-        } else
+        }
+        else
         {
             std::cout << "CreateSocket error" << std::endl;
             exit(0);
@@ -30,7 +31,12 @@ namespace vc
     {
         if(_Sock.bind(m_ip, m_port))
         {
-
+            std::cout << "bind ip, port success " << std::endl;
+        }
+        else
+        {
+            std::cout << "socket bind error" << std::endl;
+            exit(0);
         }
     }
 

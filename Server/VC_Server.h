@@ -17,12 +17,13 @@ namespace vc
 
     private:
         Vc_Socket _Sock;
+
+    private:
         int m_sock;
         int fd;
 
         std::string m_ip;
         int m_port;
-
     };
 
 } //vc
