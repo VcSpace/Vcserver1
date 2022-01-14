@@ -8,10 +8,13 @@ namespace vc
 
     Vc_Socket::~Vc_Socket()
     {
-
+        if(_sockfd >= 0)
+        {
+            ::close(_sockfd);
+        }
     }
 
-    bool Vc_Socket::create_socket(int Domain, int type)
+    bool Vc_Socket::Create_socket(int Domain, int type)
     {
         _Domain = Domain;
         _type = type;
@@ -38,7 +41,17 @@ namespace vc
         }
         else
         {
-            parseAddr(ip, addr.sin_addr);
+            return parseAddr(ip, addr.sin_addr);
+        }
+
+        try
+        {
+            bind(addr, sizeof(addr));
+            return true;
+        }
+        catch(...)
+        {
+            std::cout << "catch bind error " << std::endl;
         }
 
         return false;
@@ -74,7 +87,6 @@ namespace vc
             if((pstHostent = gethostbyname(buf)) == NULL || pstHostent->h_addr_list == NULL || pstHostent->h_addr_list[0] == NULL)
             {
                 std::cout << "can't parse the domain" << std::endl;
-                exit(0);
             }
             else
             {
@@ -101,8 +113,32 @@ namespace vc
 
             }
         }
+        else
+        {
+            return true;
+        }
 
         return false;
+    }
+
+    void Vc_Socket::bind(const sockaddr_in &addr, socklen_t addrlen)
+    {
+        int reuse = 1;
+        SetSocketOpt(SO_REUSEADDR, (const void *) &reuse, sizeof(int), SOL_SOCKET);
+
+        if(::bind(_sockfd, (struct sockaddr *) &addr, addrlen) < 0)
+        {
+            std::cout << "::bind error" << std::endl;
+        }
+        else
+        {
+            ;
+        }
+    }
+
+    int Vc_Socket::SetSocketOpt(int opt, const void *optval, socklen_t len, int level)
+    {
+        return setsockopt(_sockfd, level, opt, optval, len);
     }
 
 } //vc
