@@ -12,10 +12,10 @@ int main(int argc, char **argv)
     }
 
     std::cout << "Server Start" << std::endl;
-    vc::Vc_Server server(ip, port);
-    server.CreateSocket();
-    server.bind();
-//    server.CreateEpoll();
+    vc::Vc_Server *server = new vc::Vc_Server(ip, port);
+    server->CreateSocket();
+    server->bind();
+    server.CreateEpoll();
 
     return 0;
 }
