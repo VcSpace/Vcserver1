@@ -26,7 +26,6 @@ namespace vc
             std::cout << "CreateSocket error" << std::endl;
             exit(0);
         }
-
     }
 
     void Vc_Server::bind()
@@ -40,6 +39,15 @@ namespace vc
             std::cout << "socket bind error" << std::endl;
             exit(0);
         }
+        _Sock.listen(1024);
+        std::cout << "server alreay listen fd is " << _Sock.getfd() << std::endl;
+
+        _Sock.setKeepAlive();
+        _Sock.setTcpNoDelay();
+        //不要设置close wait否则http服务回包主动关闭连接会有问题
+        _Sock.setNoCloseWait(_et);
+        _Sock.setblock(false);
+
     }
 
     void Vc_Server::CreateEpoll()
@@ -62,8 +70,10 @@ namespace vc
 
             for(i = 0; i < _ep_wait; ++i)
             {
-                if(_ep_wait == m_sock)
+                const epoll_event &ev = _epoller.get(i);
+                if(m_sock == ev.data.fd)
                 {
+                    std::cout << __LINE__ << std::endl;
                     NewConnection();
                 }
             }
@@ -88,14 +98,14 @@ namespace vc
                 }
                 else
                 {
-                    ;
+                    std::cout << "new client connect" << std::endl;
                 }
             }
-
-            return;
-        } else
-        {;}
-
+        }
+        else
+        {
+            ; //lt
+        }
     }
 
 } //vc
