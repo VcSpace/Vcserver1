@@ -2,6 +2,10 @@
 #define VCSERVER_VC_EPOLLER_H
 
 #include <sys/epoll.h>
+#include <fcntl.h>
+#include <cassert>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace vc
 {
@@ -11,8 +15,22 @@ namespace vc
         VC_Epoller();
         ~VC_Epoller();
 
-    private:
+        void create_epoll(int ev_size, int max_conn, bool et);
+        void add(int fd, __uint32_t event);
+        void mod(int fd, __uint32_t event);
+        void del(int fd, __uint32_t event);
+        void epollctl(int fd, __uint32_t event, int op);
 
+        int wait();
+
+    private:
+        struct epoll_event *_pevs;
+
+        int _ev_size;
+        int _epollfd;
+        int _maxconnect;
+
+        bool _et;
     };
 
 } //vc
