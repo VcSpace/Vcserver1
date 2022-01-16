@@ -2,7 +2,7 @@
 
 namespace vc
 {
-    Vc_Socket::Vc_Socket() : _sockfd(0), _Domain(AF_INET), _type(SOCK_STREAM)
+    Vc_Socket::Vc_Socket() : _sockfd(-1), _Domain(AF_INET), _type(SOCK_STREAM)
     {
     }
 
@@ -139,6 +139,83 @@ namespace vc
     int Vc_Socket::SetSocketOpt(int opt, const void *optval, socklen_t len, int level)
     {
         return setsockopt(_sockfd, level, opt, optval, len);
+    }
+
+    void Vc_Socket::listen(int size)
+    {
+        if(::listen(_sockfd, size) < 0)
+        {
+            std::cout << "listen error" << std::endl;
+        } else
+        {
+            std::cout << "listen success" << std::endl;
+        }
+    }
+
+    void Vc_Socket::setKeepAlive()
+    {
+        int ret = 1;
+        if(SetSocketOpt(SO_KEEPALIVE, (char *) &ret, int(sizeof(int)), SOL_SOCKET) == -1)
+        {
+            std::cout << "setKeepAlive error" << std::endl;
+        }
+    }
+
+    void Vc_Socket::setTcpNoDelay()
+    {
+        int ret = 1;
+        if(SetSocketOpt(TCP_NODELAY, (char *) &ret, int(sizeof(int)), SOL_SOCKET) == -1)
+        {
+            std::cout << "setTcpNoDelay error" << std::endl;
+        }
+    }
+
+    void Vc_Socket::setNoCloseWait(bool et)
+    {
+        struct linger _linger;
+        if(et)
+        {
+            _linger.l_onoff = 0;
+            _linger.l_linger = 1;
+        } else
+        {
+            _linger.l_onoff = 1;
+            _linger.l_linger = 1;
+        }
+
+        if(SetSocketOpt(SO_LINGER, (char *) &_linger, sizeof(linger), SOL_SOCKET) == -1)
+        {
+            std::cout << "setLinger error" << std::endl;
+        }
+    }
+
+    void Vc_Socket::setblock(bool block)
+    {
+        if(_sockfd == -1)
+        {
+            return;
+        } else
+        {
+            int val = 0;
+
+            if ((val = fcntl(_sockfd, F_GETFL, 0)) == -1)
+            {
+                std::cout << "fcntl set F_GETFL error" << std::endl;
+            }
+
+            if(!block)
+            {
+                val |= O_NONBLOCK;
+            } else
+            {
+                val &= ~O_NONBLOCK;
+            }
+
+            if(fcntl(_sockfd, F_SETFL, val) == -1)
+            {
+                std::cout << "fcntl set F_SETFL error" << std::endl;
+            }
+        }
     }
 
 } //vc
