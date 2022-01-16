@@ -2,7 +2,6 @@
 #define VCSERVER_VC_EPOLLER_H
 
 #include <sys/epoll.h>
-#include <fcntl.h>
 #include <cassert>
 #include <sys/types.h>
 #include <unistd.h>
@@ -22,6 +21,11 @@ namespace vc
         void epollctl(int fd, __uint32_t event, int op);
 
         int wait();
+        struct epoll_event &get(int i)
+        {
+            assert(_pevs != 0);
+            return _pevs[i];
+        }
 
     private:
         struct epoll_event *_pevs;

@@ -31,7 +31,6 @@ namespace vc
         _et = et;
 
         _epollfd = epoll_create(_maxconnect + 1);
-        std::cout << "create epoll error " << std::endl;
         assert(_epollfd != -1);
 
         _pevs = new epoll_event[_maxconnect + 1];
