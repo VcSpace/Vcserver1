@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <sys/socket.h>
-#include <string>
+#include <cstring>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -24,6 +24,7 @@ namespace vc
         void bind(const struct sockaddr_in &addr, socklen_t addrlen);
 
         int SetSocketOpt(int opt, const void *optval, socklen_t len, int level);
+        int getfd() {return _sockfd;}
 
     private:
         int _sockfd;
