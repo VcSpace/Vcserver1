@@ -67,14 +67,34 @@ namespace vc
         while(true)
         {
             int _ep_wait = _epoller.wait();
+            std::cout << "m_sock = " << m_sock << std::endl;
+            std::cout << "_ep_wait = " << _ep_wait << std::endl;
 
             for(i = 0; i < _ep_wait; ++i)
             {
                 const epoll_event &ev = _epoller.get(i);
+                std::cout << "ev.data.fd = " << ev.data.fd << std::endl;
                 if(m_sock == ev.data.fd)
                 {
-                    std::cout << __LINE__ << std::endl;
                     NewConnection();
+                    sleep(500);
+                }
+                else if(ev.events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
+                {
+                    std::cout << "close connect" << std::endl;
+                    sleep(500);
+                }
+                //处理客户连接上接收到的数据
+                else if (ev.events & EPOLLIN)
+                {
+                    std::cout << "EPOLLIN" << std::endl;
+                    sleep(500);
+
+                }
+                else if(ev.events & EPOLLOUT)
+                {
+                    std::cout << "EPOLLOUT" << std::endl;
+                    sleep(500);
                 }
             }
         }
@@ -93,7 +113,6 @@ namespace vc
                 int connfd = accept(m_sock, (struct sockaddr *) &client_addr, &client_addr_len);
                 if(connfd < 0)
                 {
-                    std::cout << "accept error" << std::endl;
                     break;
                 }
                 else
