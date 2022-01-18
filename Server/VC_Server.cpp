@@ -18,7 +18,6 @@ namespace vc
 
         if(_Sock.Create_socket(Domain, type))
         {
-            std::cout << "CreateSocket" << std::endl;
             m_sock = _Sock.getfd();
         }
         else
@@ -39,13 +38,13 @@ namespace vc
             std::cout << "socket bind error" << std::endl;
             exit(0);
         }
-        _Sock.listen(1024);
+        _Sock.listen(10);
         std::cout << "server alreay listen fd is " << _Sock.getfd() << std::endl;
 
         _Sock.setKeepAlive();
         _Sock.setTcpNoDelay();
         //不要设置close wait否则http服务回包主动关闭连接会有问题
-        _Sock.setNoCloseWait(_et);
+//        _Sock.setNoCloseWait(_et);
         _Sock.setblock(false);
 
     }
@@ -54,7 +53,7 @@ namespace vc
     {
         _epoller.create_epoll(_epollevent, _maxconnect, _et); //event, conn, et
 
-        _epoller.add(_Sock.getfd(), EPOLLIN);
+        _epoller.add(m_sock, EPOLLIN | EPOLLRDHUP);
 
         std::cout << "create_epoll success" << std::endl;
     }
@@ -67,41 +66,51 @@ namespace vc
         while(true)
         {
             int _ep_wait = _epoller.wait();
-            std::cout << "m_sock = " << m_sock << std::endl;
-            std::cout << "_ep_wait = " << _ep_wait << std::endl;
+
+            if(_ep_wait < 0 && errno != EINTR)
+            {
+                std::cout << "epoll failure" << std::endl;
+                break;
+            }
 
             for(i = 0; i < _ep_wait; ++i)
             {
                 const epoll_event &ev = _epoller.get(i);
-                std::cout << "ev.data.fd = " << ev.data.fd << std::endl;
                 if(m_sock == ev.data.fd)
                 {
-                    NewConnection();
-                    sleep(500);
+                    if(NewConnection())
+                    {
+                        ;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    sleep(5);
                 }
                 else if(ev.events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
                 {
                     std::cout << "close connect" << std::endl;
-                    sleep(500);
+                    sleep(5);
                 }
                 //处理客户连接上接收到的数据
                 else if (ev.events & EPOLLIN)
                 {
                     std::cout << "EPOLLIN" << std::endl;
-                    sleep(500);
+                    sleep(5);
 
                 }
                 else if(ev.events & EPOLLOUT)
                 {
                     std::cout << "EPOLLOUT" << std::endl;
-                    sleep(500);
+                    sleep(5);
                 }
             }
         }
 
     }
 
-    void Vc_Server::NewConnection()
+    bool Vc_Server::NewConnection()
     {
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof(client_addr);
@@ -113,11 +122,12 @@ namespace vc
                 int connfd = accept(m_sock, (struct sockaddr *) &client_addr, &client_addr_len);
                 if(connfd < 0)
                 {
-                    break;
+                    ;
                 }
                 else
                 {
                     std::cout << "new client connect" << std::endl;
+                    return true;
                 }
             }
         }
@@ -125,6 +135,8 @@ namespace vc
         {
             ; //lt
         }
+
+        return false;
     }
 
 } //vc
