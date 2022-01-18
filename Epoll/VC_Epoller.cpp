@@ -58,7 +58,8 @@ namespace vc
         ev.events = event;
         if(_et)
         {
-            ev.events |= EPOLLET;
+            ev.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+//            ev.events |= EPOLLET;
         }
 
         epoll_ctl(_epollfd, op, fd, &ev);
