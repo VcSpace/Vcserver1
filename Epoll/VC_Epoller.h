@@ -20,7 +20,13 @@ namespace vc
         void del(int fd, __uint32_t event);
         void epollctl(int fd, __uint32_t event, int op);
 
+
         int wait();
+        int getfd()
+        {
+            return _epollfd;
+        }
+
         struct epoll_event &get(int i)
         {
             assert(_pevs != 0);
