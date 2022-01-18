@@ -16,7 +16,8 @@ namespace vc
         void CreateEpoll();
         void bind();
         void run();
-        void NewConnection();
+
+        bool NewConnection();
 
     private:
         Vc_Socket _Sock;
