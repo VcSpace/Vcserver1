@@ -41,7 +41,7 @@ namespace vc
         }
         else
         {
-            return parseAddr(ip, addr.sin_addr);
+            parseAddr(ip, addr.sin_addr);
         }
 
         try
