@@ -86,24 +86,20 @@ namespace vc
                     {
                         continue;
                     }
-                    sleep(5);
                 }
                 else if(ev.events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
                 {
                     std::cout << "close connect" << std::endl;
-                    sleep(5);
                 }
                 //处理客户连接上接收到的数据
                 else if (ev.events & EPOLLIN)
                 {
                     std::cout << "EPOLLIN" << std::endl;
-                    sleep(5);
 
                 }
                 else if(ev.events & EPOLLOUT)
                 {
                     std::cout << "EPOLLOUT" << std::endl;
-                    sleep(5);
                 }
             }
         }
