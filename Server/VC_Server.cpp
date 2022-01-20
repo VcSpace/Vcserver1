@@ -44,7 +44,7 @@ namespace vc
         _Sock.setKeepAlive();
         _Sock.setTcpNoDelay();
         //不要设置close wait否则http服务回包主动关闭连接会有问题
-//        _Sock.setNoCloseWait(_et);
+        _Sock.setNoCloseWait(_et);
         _Sock.setblock(false);
 
     }
@@ -92,10 +92,9 @@ namespace vc
                     std::cout << "close connect" << std::endl;
                 }
                 //处理客户连接上接收到的数据
-                else if (ev.events & EPOLLIN)
+                else if(ev.events & EPOLLIN)
                 {
                     std::cout << "EPOLLIN" << std::endl;
-
                 }
                 else if(ev.events & EPOLLOUT)
                 {
