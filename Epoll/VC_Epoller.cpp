@@ -4,7 +4,6 @@
 
 namespace vc
 {
-
     VC_Epoller::VC_Epoller() : _pevs(nullptr), _epollfd(0), _ev_size(20000), _maxconnect(1024), _et(true)
     {
 
