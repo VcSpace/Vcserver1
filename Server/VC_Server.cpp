@@ -6,7 +6,7 @@ namespace vc
 
     }
     Vc_Server::Vc_Server(const std::string &ip, const int &port, const int &epollevent, const int &maxconn, bool et) : m_ip(ip), m_port(port),
-                                                                                                    _epollevent(epollevent), _maxconnect(maxconn), _et(et)
+                                                                                                    _epollevent(epollevent), _maxconnect(maxconn), _et(et), m_sock(-1), m_epollfd(0)
     {
 
     }
@@ -18,7 +18,8 @@ namespace vc
 
         if(_Sock.Create_socket(Domain, type))
         {
-            m_sock = _Sock.getfd();
+            ;
+
         }
         else
         {
@@ -52,10 +53,25 @@ namespace vc
     void Vc_Server::CreateEpoll()
     {
         _epoller.create_epoll(_epollevent, _maxconnect, _et); //event, conn, et
-
-        _epoller.add(m_sock, EPOLLIN | EPOLLRDHUP);
+        m_sock = _Sock.getfd();
+        _epoller.add(m_sock, EPOLLIN | EPOLLOUT | EPOLLET);
+        m_epollfd = _epoller.getfd();
 
         std::cout << "create_epoll success" << std::endl;
+    }
+
+    static void handle_events(const epoll_event *ev, int epfd) {
+        printf("events %d: ", ev->data.fd);
+
+        if (ev->events & EPOLLIN) {
+            printf("EPOLLIN ");
+        }
+
+        if (ev->events & EPOLLOUT) {
+            printf("EPOLLOUT ");
+        }
+
+        printf("\n");
     }
 
     void Vc_Server::run()
@@ -73,10 +89,10 @@ namespace vc
                 break;
             }
 
-            for(i = 0; i < _ep_wait; ++i)
+            for(i = 0; i < _ep_wait; i++)
             {
                 const epoll_event &ev = _epoller.get(i);
-                if(m_sock == ev.data.fd)
+                if(m_sock == m_epollfd)
                 {
                     if(NewConnection())
                     {
@@ -91,7 +107,7 @@ namespace vc
                 {
                     std::cout << "close connect" << std::endl;
                 }
-                //处理客户连接上接收到的数据
+//                处理客户连接上接收到的数据
                 else if(ev.events & EPOLLIN)
                 {
                     std::cout << "EPOLLIN" << std::endl;
@@ -100,6 +116,11 @@ namespace vc
                 {
                     std::cout << "EPOLLOUT" << std::endl;
                 }
+//                else
+//                {
+//                    vc::handle_events(&ev, m_epollfd);
+//                    continue;
+//                }
             }
         }
 
