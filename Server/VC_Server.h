@@ -25,6 +25,7 @@ namespace vc
 
     private:
         int m_sock;
+        int m_epollfd;
         int fd;
         int m_port;
         int _epollevent;
