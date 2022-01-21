@@ -52,16 +52,22 @@ namespace vc
 
     void VC_Epoller::epollctl(int fd, __uint32_t event, int op)
     {
-        struct epoll_event ev;
+        epoll_event ev;
         ev.data.fd = fd;
-        ev.events = event;
         if(_et)
         {
-            ev.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+            ev.events = event;
+            std::cout << "set events" << std::endl;
 //            ev.events |= EPOLLET;
         }
+        else
+        {
+            ev.events = EPOLLIN | EPOLLRDHUP;
+        }
 
-        epoll_ctl(_epollfd, op, fd, &ev);
+        int ret = epoll_ctl(_epollfd, op, fd, &ev);
+
+        std::cout << "epoll_ctl: " << ret << std::endl;
     }
 
     int VC_Epoller::wait() {
