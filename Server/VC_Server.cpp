@@ -60,6 +60,7 @@ namespace vc
         std::cout << "create_epoll success" << std::endl;
     }
 
+    //这个函数为测试使用
     static void handle_events(const epoll_event *ev, int epfd) {
         printf("events %d: ", ev->data.fd);
 
