@@ -26,6 +26,8 @@ namespace vc
             std::cout << "CreateSocket error" << std::endl;
             exit(0);
         }
+
+        bind();
     }
 
     void Vc_Server::bind()
