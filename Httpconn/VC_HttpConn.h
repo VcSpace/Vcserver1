@@ -1,0 +1,9 @@
+#ifndef VCSERVER_VC_HTTPCONN_H
+#define VCSERVER_VC_HTTPCONN_H
+
+
+class VC_HttpConn {
+
+};
+
+#endif //VCSERVER_VC_HTTPCONN_H
