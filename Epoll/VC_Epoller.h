@@ -21,7 +21,7 @@ namespace vc
         void epollctl(int fd, __uint32_t event, int op);
 
 
-        int wait();
+        int wait(int timeout);
         int getfd()
         {
             return _epollfd;

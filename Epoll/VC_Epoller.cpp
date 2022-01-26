@@ -70,8 +70,8 @@ namespace vc
         std::cout << "epoll_ctl: " << ret << std::endl;
     }
 
-    int VC_Epoller::wait() {
-        return epoll_wait(_epollfd, _pevs, _maxconnect, 30);
+    int VC_Epoller::wait(int timeout) {
+        return epoll_wait(_epollfd, _pevs, _maxconnect, timeout);
     }
 
 } //vc
