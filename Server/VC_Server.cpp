@@ -6,7 +6,7 @@ namespace vc
 
     }
     Vc_Server::Vc_Server(const std::string &ip, const int &port, const int &epollevent, const int &maxconn, bool et) : m_ip(ip), m_port(port),
-                                                                                                    _epollevent(epollevent), _maxconnect(maxconn), _et(et), m_sock(-1), m_epollfd(0)
+                                                         _epollevent(epollevent), _maxconnect(maxconn), _et(et), m_sock(-1), m_epollfd(0), _timer(nullptr)
     {
 
     }
@@ -82,9 +82,14 @@ namespace vc
         std::cout << "server run" << std::endl;
 
         int i = 0;
+        int timeMS = 0;
         while(true)
         {
-            int _ep_wait = _epoller.wait();
+            if(timeMS > 0) {
+                ;
+            }
+
+            int _ep_wait = _epoller.wait(timeMS);
 
             if(_ep_wait < 0 && errno != EINTR)
             {

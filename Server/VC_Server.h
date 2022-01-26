@@ -3,6 +3,7 @@
 
 #include "VC_Socket.h"
 #include "../Epoll/VC_Epoller.h"
+#include "../Timer/VC_Timer.h"
 
 namespace vc
 {
@@ -22,6 +23,7 @@ namespace vc
     private:
         Vc_Socket _Sock;
         VC_Epoller _epoller;
+        VC_Timer *_timer;
 
     private:
         int m_sock;
