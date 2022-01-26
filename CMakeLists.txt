@@ -8,6 +8,7 @@ add_executable(${PROJECT_NAME}
         Server/VC_Server.cpp
         Server/VC_Socket.cpp
         Epoll/VC_Epoller.cpp
+        Timer/VC_Timer.cpp
         main.cpp)
 
 #target_link_libraries(${PROJECT_NAME} -pthread -lmysqlclient)
