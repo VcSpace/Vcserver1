@@ -4,6 +4,7 @@
 #include "VC_Socket.h"
 #include "../Epoll/VC_Epoller.h"
 #include "../Timer/VC_Timer.h"
+#include "../Thread/VC_Thread.hpp"
 
 namespace vc
 {
@@ -24,11 +25,13 @@ namespace vc
         Vc_Socket _Sock;
         VC_Epoller _epoller;
         VC_Timer *_timer;
+        VC_Thread<Vc_Server *> *_thread;
 
     private:
+        int fd;
         int m_sock;
         int m_epollfd;
-        int fd;
+        int m_threadnum;
         int m_port;
         int _epollevent;
         int _maxconnect;
