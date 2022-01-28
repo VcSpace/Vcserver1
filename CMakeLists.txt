@@ -9,6 +9,7 @@ add_executable(${PROJECT_NAME}
         Server/VC_Socket.cpp
         Epoll/VC_Epoller.cpp
         Timer/VC_Timer.cpp
+        Thread/VC_Thread.hpp
         Thread/VC_Lock.cpp
         main.cpp)
 
