@@ -14,9 +14,8 @@ namespace vc
 
     }
 
-    VC_Lock::~VC_Lock() {
-        unlock();
-
+    VC_Lock::~VC_Lock()
+    {
         if(pthread_mutex_destroy(&m_mutex) != 0)
         {
             std::cout << "mutex destroy error" << std::endl;
@@ -25,24 +24,10 @@ namespace vc
     }
 
     bool VC_Lock::lock() {
-        if(pthread_mutex_lock(&m_mutex) != 0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return pthread_mutex_lock(&m_mutex);
     }
 
     bool VC_Lock::unlock() {
-        if(pthread_mutex_unlock(&m_mutex) != 0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return pthread_mutex_unlock(&m_mutex);
     }
 } //vc
