@@ -8,14 +8,15 @@
 
 namespace vc
 {
-    class Vc_Server
+    class VC_Server
     {
     public:
-        Vc_Server(const std::string &ip, const int &port, const int &epollevent, const int &maxcon, bool et);
-        ~Vc_Server();
+        VC_Server(const std::string &ip, const int &port, const int &epollevent, const int &maxcon, bool et, int threadnum, int queue_size);
+        ~VC_Server();
 
         void CreateSocket();
         void CreateEpoll();
+        void CreateThread();
         void bind();
         void run();
 
@@ -25,7 +26,7 @@ namespace vc
         Vc_Socket _Sock;
         VC_Epoller _epoller;
         VC_Timer *_timer;
-        VC_Thread<Vc_Server *> *_thread;
+        VC_Thread<VC_Server *> *_thread;
 
     private:
         int fd;
@@ -35,6 +36,7 @@ namespace vc
         int m_port;
         int _epollevent;
         int _maxconnect;
+        int que_size;
 
         std::string m_ip;
         bool _et;

@@ -2,16 +2,16 @@
 
 namespace vc
 {
-    Vc_Server::~Vc_Server() {
+    VC_Server::~VC_Server() {
 
     }
-    Vc_Server::Vc_Server(const std::string &ip, const int &port, const int &epollevent, const int &maxconn, bool et) : m_ip(ip), m_port(port),
-                                                         _epollevent(epollevent), _maxconnect(maxconn), _et(et), m_sock(-1), m_epollfd(0), _timer(nullptr)
+    VC_Server::VC_Server(const std::string &ip, const int &port, const int &epollevent, const int &maxconn, bool et, int threadnum, int queue_size) : m_ip(ip), m_port(port),
+                     _epollevent(epollevent), _maxconnect(maxconn), _et(et), m_sock(-1), m_epollfd(0), _timer(nullptr), m_threadnum(threadnum), que_size(queue_size)
     {
 
     }
 
-    void Vc_Server::CreateSocket()
+    void VC_Server::CreateSocket()
     {
         int Domain = AF_INET;
         int type = SOCK_STREAM;
@@ -30,7 +30,7 @@ namespace vc
         bind();
     }
 
-    void Vc_Server::bind()
+    void VC_Server::bind()
     {
         if(_Sock.bind(m_ip, m_port))
         {
@@ -52,7 +52,7 @@ namespace vc
 
     }
 
-    void Vc_Server::CreateEpoll()
+    void VC_Server::CreateEpoll()
     {
         _epoller.create_epoll(_epollevent, _maxconnect, _et); //event, conn, et
         m_sock = _Sock.getfd();
@@ -77,7 +77,7 @@ namespace vc
         printf("\n");
     }
 
-    void Vc_Server::run()
+    void VC_Server::run()
     {
         std::cout << "server run" << std::endl;
 
@@ -119,6 +119,7 @@ namespace vc
                 else if(ev.events & EPOLLIN)
                 {
                     std::cout << "EPOLLIN" << std::endl;
+                    _thread->push()
                 }
                 else if(ev.events & EPOLLOUT)
                 {
@@ -134,7 +135,7 @@ namespace vc
 
     }
 
-    bool Vc_Server::NewConnection()
+    bool VC_Server::NewConnection()
     {
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof(client_addr);
@@ -161,6 +162,11 @@ namespace vc
         }
 
         return false;
+    }
+
+    void VC_Server::CreateThread()
+    {
+        _thread = new VC_Thread<VC_Server *>(m_threadnum, que_size);
     }
 
 } //vc
