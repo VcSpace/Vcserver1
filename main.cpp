@@ -14,9 +14,10 @@ int main(int argc, char **argv)
     }
 
     std::cout << "Server Start" << std::endl;
-    vc::Vc_Server *server = new vc::Vc_Server(ip, port, epollevent, maxconn, true);
+    vc::VC_Server *server = new vc::VC_Server(ip, port, epollevent, maxconn, true, 8, 1024);
     server->CreateSocket();
     server->CreateEpoll();
+    server->CreateThread();
     server->run();
 
     return 0;
