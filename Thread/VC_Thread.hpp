@@ -11,16 +11,16 @@ namespace vc
     class VC_Thread
     {
     public:
-        VC_Thread(int threadnum, int que_size);
+        VC_Thread(int threadnum = 8, int que_size = 1024);
         ~VC_Thread();
 
-        void push(T *res);
+        void push();
         void pop();
         void run();
 
     private:
-        static void worker(void *arg);
-        VC_Lock *_lock;
+        static void *worker(void *arg);
+        VC_Lock _lock;
 
     private:
         std::queue<T*> _pool;
@@ -33,26 +33,20 @@ namespace vc
    template <typename T>
    VC_Thread<T>::VC_Thread(int threadnum, int que_size)
    {
-       if(threadnum <= 0)
-       {
-           m_thread = 8;
-       }
-       else
-       {
-           m_thread = threadnum;
-       }
+       m_thread = threadnum;
+       m_qsize = que_size;
        _threads = new pthread_t[m_thread];
 
        for(int t = 0; t < m_thread; ++t)
        {
-           if(pthread_create(*(_threads + t), nullptr, worker, this) != 0)
+           if(pthread_create(_threads + t, nullptr, worker, this) != 0)
            {
                delete[] _threads;
                throw std::exception();
            }
            else
            {
-               ;
+               std::cout << "create thread: " << t + 1 << std::endl;
            }
 
            if(pthread_detach(_threads[t]))
@@ -61,7 +55,7 @@ namespace vc
                throw std::exception();
            } else
            {
-               ;
+               std::cout << "detech thread: " << t + 1 << std::endl;
            }
        }
 
@@ -74,7 +68,7 @@ namespace vc
     }
 
     template<typename T>
-    void VC_Thread<T>::worker(void *arg)
+    void* VC_Thread<T>::worker(void *arg)
     {
         VC_Thread *p = static_cast<VC_Thread *>(arg);
         p->run();
@@ -84,12 +78,16 @@ namespace vc
     template<typename T>
     void VC_Thread<T>::run()
     {
-        _lock.lock();
-
+        std::cout << "thread start " << std::endl;
+        while(true)
+        {
+            _lock.lock();
+            _lock.unlock();
+        }
     }
 
     template<typename T>
-    void VC_Thread<T>::push(T *res)
+    void VC_Thread<T>::push()
     {
 
     }
