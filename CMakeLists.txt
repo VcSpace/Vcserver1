@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 add_executable(${PROJECT_NAME}
         Server/VC_Server.cpp
         Server/VC_Socket.cpp
+        Sql_conn/VC_MySql.cpp
         Epoll/VC_Epoller.cpp
         Timer/VC_Timer.cpp
         Thread/VC_Thread.hpp
